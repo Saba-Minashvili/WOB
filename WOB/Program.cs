@@ -1,9 +1,11 @@
 using Domain.Entities;
+using Domain.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Persistence;
 using Persistence.Mapper;
+using Persistence.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,6 +33,8 @@ builder.Services.Configure<IdentityOptions>(options =>
 	options.Password.RequireUppercase = true;
 	options.Password.RequiredLength = 8;
 });
+
+builder.Services.AddTransient(typeof(IUnitOfWork), typeof(UnitOfWork));
 
 builder.Services.AddAutoMapper(typeof(ObjectMapper));
 
