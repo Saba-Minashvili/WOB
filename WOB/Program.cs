@@ -6,6 +6,8 @@ using Microsoft.OpenApi.Models;
 using Persistence;
 using Persistence.Mapper;
 using Persistence.Repositories;
+using Services;
+using Services.Abstractions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,6 +36,7 @@ builder.Services.Configure<IdentityOptions>(options =>
 	options.Password.RequiredLength = 8;
 });
 
+builder.Services.AddScoped(typeof(IServiceManager), typeof(ServiceManager));
 builder.Services.AddTransient(typeof(IUnitOfWork), typeof(UnitOfWork));
 
 builder.Services.AddAutoMapper(typeof(ObjectMapper));

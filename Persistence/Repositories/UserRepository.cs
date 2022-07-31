@@ -27,11 +27,6 @@ namespace Persistence.Repositories
                 throw new NullReferenceException(nameof(_dbContext));
             }
 
-            if (string.IsNullOrEmpty(userId))
-            {
-                throw new ArgumentNullException(nameof(userId));
-            }
-
             return await _dbContext.Users
                 .FirstOrDefaultAsync(o => o.Id == userId, cancellationToken);
         }
@@ -43,11 +38,6 @@ namespace Persistence.Repositories
                 throw new NullReferenceException(nameof(_dbContext));
             }
 
-            if(user == null)
-            {
-                throw new ArgumentNullException(nameof(user));
-            }
-
             _dbContext.Users.Add(user);
         }
 
@@ -56,16 +46,6 @@ namespace Persistence.Repositories
             if (_dbContext == null)
             {
                 throw new NullReferenceException(nameof(_dbContext));
-            }
-
-            if (user == null)
-            {
-                throw new ArgumentNullException(nameof(user));
-            }
-
-            if (string.IsNullOrEmpty(userId))
-            {
-                throw new ArgumentNullException(nameof(userId));
             }
 
             user.Id = userId;
