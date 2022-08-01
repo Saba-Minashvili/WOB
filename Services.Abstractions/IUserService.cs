@@ -6,7 +6,7 @@ namespace Services.Abstractions
     {
         Task<IEnumerable<UserDto>> GetAllAsync(CancellationToken cancellationToken = default);
         Task<UserDto?> GetByIdAsync(string? userId, CancellationToken cancellationToken = default);
-        Task<RegisterUserDto?> CreateAsync(RegisterUserDto? userDto, CancellationToken cancellationToken = default);
-        Task UpdateAsync(string? userId, UpdateUserDto? userDto, CancellationToken cancellationToken = default);
+        Task<bool> CreateAsync(RegisterUserDto? userDto, CancellationToken cancellationToken = default);
+        Task<bool> UpdateAsync(string? userId, UpdateUserDto? userDto, CancellationToken cancellationToken = default);
     }
 }

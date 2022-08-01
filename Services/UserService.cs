@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Contracts;
 using Domain.Entities;
+using Domain.Exceptions;
 using Domain.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Services.Abstractions;
@@ -58,8 +59,10 @@ namespace Services
             return userDto;
         }
 
-        public async Task<RegisterUserDto?> CreateAsync(RegisterUserDto? userDto, CancellationToken cancellationToken = default)
+        public async Task<bool> CreateAsync(RegisterUserDto? userDto, CancellationToken cancellationToken = default)
         {
+            var user = _mapper.Map<User>(userDto);
+
             if (_unitOfWork == null)
             {
                 throw new NullReferenceException(nameof(_unitOfWork));
@@ -70,17 +73,20 @@ namespace Services
                 throw new NullReferenceException(nameof(_mapper));
             }
 
-            var user = _mapper.Map<User>(userDto);
+            if(await CheckDuplicateEmailAsync(userDto.Email) == true)
+            {
+                throw new AlreadyExistsException("User with this email already exists.");
+            }
 
             user.UserName = userDto.Email;
             user.PasswordHash = _userManager.PasswordHasher.HashPassword(user, userDto.Password);
 
-            await _userManager.CreateAsync(user);
+            IdentityResult result = await _userManager.CreateAsync(user);
 
-            return userDto;
+            return result.Succeeded != false;
         }
 
-        public async Task UpdateAsync(string? userId, UpdateUserDto? userDto, CancellationToken cancellationToken = default)
+        public async Task<bool> UpdateAsync(string? userId, UpdateUserDto? userDto, CancellationToken cancellationToken = default)
         {
             if (_unitOfWork == null)
             {
@@ -98,7 +104,21 @@ namespace Services
             user.LastName = userDto.LastName;
             user.Photo = userDto.Photo;
 
-            await _unitOfWork.SaveChangeAsync(cancellationToken);
+            int result = await _unitOfWork.SaveChangeAsync(cancellationToken);
+
+            return result != 0;
+        }
+
+        private async Task<bool> CheckDuplicateEmailAsync(string? email)
+        {
+            if (string.IsNullOrEmpty(email))
+            {
+                return false;
+            }
+
+            var user = await _userManager.FindByEmailAsync(email);
+
+            return user != null;
         }
     }
 }

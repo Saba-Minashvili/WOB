@@ -1,11 +1,15 @@
 using Domain.Authentication;
 using Domain.Entities;
 using Domain.Repositories;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Middleware.Filters;
+using Middleware.Validators;
 using Persistence;
 using Persistence.Authentication;
 using Persistence.Authentication.Abstraction;
@@ -44,6 +48,12 @@ builder.Services.Configure<IdentityOptions>(options =>
 
 builder.Services.Configure<Token>(builder.Configuration.GetSection("JWT"));
 
+builder.Services.Configure<ApiBehaviorOptions>(options =>
+{
+	options.SuppressModelStateInvalidFilter = true;
+});
+
+
 builder.Services.AddScoped<IServiceManager, ServiceManager>();
 builder.Services.AddScoped<IJwtAuthenticationService, JwtAuthenticationService>();
 builder.Services.AddTransient(typeof(IUnitOfWork), typeof(UnitOfWork));
@@ -71,7 +81,12 @@ builder.Services.AddAuthentication(o =>
 	};
 });
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(options =>
+{
+	options.Filters.Add<ValidationFilter>();
+})
+	.AddFluentValidation(configuration => configuration.RegisterValidatorsFromAssembly(typeof(RegisterUserDtoValidator).Assembly));
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>

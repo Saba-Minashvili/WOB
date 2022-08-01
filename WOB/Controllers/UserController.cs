@@ -20,7 +20,7 @@ namespace WOB.Controllers
 
             if(users == null)
             {
-                return BadRequest("Unable to get data of users.");
+                return BadRequest("Unable to get the data of users.");
             }
 
             return Ok(users);
@@ -48,14 +48,14 @@ namespace WOB.Controllers
         [HttpPost]
         public async Task<IActionResult> RegisterUser([FromBody] RegisterUserDto? userDto, CancellationToken cancellationToken = default)
         {
-            if(userDto == null)
+            var result = await _serviceManager.UserService.CreateAsync(userDto, cancellationToken);
+
+            if (!result)
             {
-                return BadRequest("Unable to register a new user.");
-            }
-
-            var user = await _serviceManager.UserService.CreateAsync(userDto, cancellationToken);
-
-            return Ok(user);
+                return BadRequest("Something went wrong. Unable to register a new user.");
+            } 
+            
+            return Ok();
         }
 
         [Authorize]
@@ -67,12 +67,12 @@ namespace WOB.Controllers
                 return BadRequest($"Invalid Request. {nameof(userId)} cannot be null or empty.");
             }
 
-            if(userDto == null)
-            {
-                return BadRequest("Unable to update the user.");
-            }
+            var result = await _serviceManager.UserService.UpdateAsync(userId, userDto, cancellationToken);
 
-            await _serviceManager.UserService.UpdateAsync(userId, userDto, cancellationToken);
+            if (!result)
+            {
+                return BadRequest("Something went wrong. Unable to update the user.");
+            }
 
             return Ok();
         }
