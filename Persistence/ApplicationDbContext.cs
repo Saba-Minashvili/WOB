@@ -15,7 +15,7 @@ namespace Persistence
             Configuration = configuration;
         }
 
-        public IConfiguration? Configuration { get; set; }
+        public IConfiguration? Configuration { get; }
         public DbSet<Book>? Books { get; set; }
         public DbSet<FeedBack>? FeedBacks { get; set; }
         public DbSet<Author>? Authors { get; set; }

@@ -1,13 +1,19 @@
+using Domain.Authentication;
 using Domain.Entities;
 using Domain.Repositories;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Persistence;
+using Persistence.Authentication;
+using Persistence.Authentication.Abstraction;
 using Persistence.Mapper;
 using Persistence.Repositories;
 using Services;
 using Services.Abstractions;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,7 +32,7 @@ builder.Services.Configure<IdentityOptions>(options =>
 {
 	options.User.RequireUniqueEmail = true;
 	options.User.AllowedUserNameCharacters =
-		"^[a-zA-Z0-9 ]*$";
+		"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@/";
 
 	// Identity : Default password settings
 	options.Password.RequireDigit = true;
@@ -36,10 +42,34 @@ builder.Services.Configure<IdentityOptions>(options =>
 	options.Password.RequiredLength = 8;
 });
 
-builder.Services.AddScoped(typeof(IServiceManager), typeof(ServiceManager));
+builder.Services.Configure<Token>(builder.Configuration.GetSection("JWT"));
+
+builder.Services.AddScoped<IServiceManager, ServiceManager>();
+builder.Services.AddScoped<IJwtAuthenticationService, JwtAuthenticationService>();
 builder.Services.AddTransient(typeof(IUnitOfWork), typeof(UnitOfWork));
 
 builder.Services.AddAutoMapper(typeof(ObjectMapper));
+
+builder.Services.AddAuthentication(o =>
+{
+	o.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+	o.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(o =>
+{
+	var key = Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"]);
+	o.SaveToken = true;
+	o.TokenValidationParameters = new TokenValidationParameters
+	{
+		ValidateIssuer = false,
+		ValidateAudience = false,
+		ValidateLifetime = true,
+		ValidateIssuerSigningKey = true,
+		ValidIssuer = builder.Configuration["JWT:Issuer"],
+		ValidAudience = builder.Configuration["JWT:Audience"],
+		IssuerSigningKey = new SymmetricSecurityKey(key),
+		ClockSkew = TimeSpan.Zero
+	};
+});
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

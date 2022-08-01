@@ -2,6 +2,7 @@
 using Contracts;
 using Domain.Entities;
 using Domain.Repositories;
+using Microsoft.AspNetCore.Identity;
 using Services.Abstractions;
 
 namespace Services
@@ -10,11 +11,13 @@ namespace Services
     {
         private readonly IUnitOfWork? _unitOfWork;
         private readonly IMapper? _mapper;
+        private readonly UserManager<User> _userManager;
 
-        public UserService(IUnitOfWork? unitOfWork, IMapper? mapper)
+        public UserService(IUnitOfWork? unitOfWork, IMapper? mapper, UserManager<User> userManager)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _userManager = userManager;
         }
 
         public async Task<IEnumerable<UserDto>> GetAllAsync(CancellationToken cancellationToken = default)
@@ -55,7 +58,7 @@ namespace Services
             return userDto;
         }
 
-        public async Task CreateAsync(RegisterUserDto? userDto, CancellationToken cancellationToken = default)
+        public async Task<RegisterUserDto?> CreateAsync(RegisterUserDto? userDto, CancellationToken cancellationToken = default)
         {
             if (_unitOfWork == null)
             {
@@ -69,9 +72,12 @@ namespace Services
 
             var user = _mapper.Map<User>(userDto);
 
-            _unitOfWork.UserRepository.CreateAsync(user);
+            user.UserName = userDto.Email;
+            user.PasswordHash = _userManager.PasswordHasher.HashPassword(user, userDto.Password);
 
-            await _unitOfWork.SaveChangeAsync(cancellationToken);
+            await _userManager.CreateAsync(user);
+
+            return userDto;
         }
 
         public async Task UpdateAsync(string? userId, UpdateUserDto? userDto, CancellationToken cancellationToken = default)

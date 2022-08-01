@@ -1,4 +1,5 @@
 ﻿using Contracts;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Services.Abstractions;
 
@@ -19,55 +20,61 @@ namespace WOB.Controllers
 
             if(users == null)
             {
-                throw new NullReferenceException(nameof(users));
+                return BadRequest("Unable to get data of users.");
             }
 
             return Ok(users);
         }
 
+        [Authorize]
         [HttpGet("{userId}")]
         public async Task<IActionResult> GetUserById(string? userId, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrEmpty(userId))
             {
-                throw new ArgumentNullException(userId);
+                return BadRequest($"Invalid Request. {nameof(userId)} cannot be null or empty.");
             }
 
             var user = await _serviceManager.UserService.GetByIdAsync(userId, cancellationToken);
 
             if(user == null)
             {
-                throw new NullReferenceException(nameof(user));
+                return BadRequest("Unable to get user.");
             }
 
             return Ok(user);
         }
 
         [HttpPost]
-        public async Task RegisterUser(RegisterUserDto? userDto, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> RegisterUser([FromBody] RegisterUserDto? userDto, CancellationToken cancellationToken = default)
         {
             if(userDto == null)
             {
-                throw new ArgumentNullException(nameof(userDto));
+                return BadRequest("Unable to register a new user.");
             }
 
-            await _serviceManager.UserService.CreateAsync(userDto, cancellationToken);
+            var user = await _serviceManager.UserService.CreateAsync(userDto, cancellationToken);
+
+            return Ok(user);
         }
 
+        [Authorize]
         [HttpPut("{userId}")]
-        public async Task UpdateUser(string? userId, UpdateUserDto? userDto, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> UpdateUser(string? userId, [FromBody] UpdateUserDto? userDto, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrEmpty(userId))
             {
-                throw new ArgumentNullException(nameof(userId));
+                return BadRequest($"Invalid Request. {nameof(userId)} cannot be null or empty.");
             }
 
             if(userDto == null)
             {
-                throw new ArgumentNullException(nameof(userDto));
+                return BadRequest("Unable to update the user.");
             }
 
             await _serviceManager.UserService.UpdateAsync(userId, userDto, cancellationToken);
+
+            return Ok();
         }
     }
 }
