@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using Contracts;
+using Contracts.ViewModels;
 using Domain.Entities;
+using Microsoft.AspNetCore.Identity;
 
 namespace Persistence.Mapper
 {
@@ -22,6 +24,8 @@ namespace Persistence.Mapper
             CreateMap<Author, AuthorDto>()
                 .ReverseMap();
             CreateMap<FeedBack, FeedBackDto>()
+                .ReverseMap();
+            CreateMap<RoleModel, IdentityRole>()
                 .ReverseMap();
         }
     }

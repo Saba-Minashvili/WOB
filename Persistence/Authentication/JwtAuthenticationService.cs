@@ -19,7 +19,7 @@ namespace Persistence.Authentication
 
         public JwtAuthenticationService(
             SignInManager<User>? signInManager, 
-            UserManager<User>? userManager, 
+            UserManager<User>? userManager,
             IOptions<Token> tokenOptions)
         {
             _signInManager = signInManager;
@@ -87,6 +87,7 @@ namespace Persistence.Authentication
 #pragma warning restore CS8604 // Possible null reference argument.
 
             JwtSecurityTokenHandler handler = new JwtSecurityTokenHandler();
+#pragma warning disable CS8604 // Possible null reference argument.
             SecurityTokenDescriptor descriptor = new SecurityTokenDescriptor
             {
                 Issuer = _token.Issuer,
@@ -95,11 +96,14 @@ namespace Persistence.Authentication
                 {
                     new Claim("UserId", user.Id),
                     new Claim(ClaimTypes.Email, user.Email),
+                    // Getting role for current user
+                    new Claim(ClaimTypes.Role, _userManager.GetRolesAsync(user).Result.FirstOrDefault())
                 }),
 
                 Expires = DateTime.UtcNow.AddMinutes(_token.Expiry),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(secret), SecurityAlgorithms.HmacSha256Signature)
             };
+#pragma warning restore CS8604 // Possible null reference argument.
 
             SecurityToken securityToken = handler.CreateToken(descriptor);
             string jwtToken = handler.WriteToken(securityToken);

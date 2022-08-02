@@ -7,12 +7,14 @@ namespace WOB.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class UserController : ControllerBase
     {
         private readonly IServiceManager? _serviceManager;
 
         public UserController(IServiceManager serviceManager) => _serviceManager = serviceManager;
 
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> GetAllUser(CancellationToken cancellationToken = default)
         {
@@ -26,7 +28,6 @@ namespace WOB.Controllers
             return Ok(users);
         }
 
-        [Authorize]
         [HttpGet("{userId}")]
         public async Task<IActionResult> GetUserById(string? userId, CancellationToken cancellationToken = default)
         {
@@ -45,6 +46,7 @@ namespace WOB.Controllers
             return Ok(user);
         }
 
+        [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> RegisterUser([FromBody] RegisterUserDto? userDto, CancellationToken cancellationToken = default)
         {
@@ -58,7 +60,6 @@ namespace WOB.Controllers
             return Ok();
         }
 
-        [Authorize]
         [HttpPut("{userId}")]
         public async Task<IActionResult> UpdateUser(string? userId, [FromBody] UpdateUserDto? userDto, CancellationToken cancellationToken = default)
         {

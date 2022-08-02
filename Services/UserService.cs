@@ -14,7 +14,10 @@ namespace Services
         private readonly IMapper? _mapper;
         private readonly UserManager<User> _userManager;
 
-        public UserService(IUnitOfWork? unitOfWork, IMapper? mapper, UserManager<User> userManager)
+        public UserService(
+            IUnitOfWork? unitOfWork, 
+            IMapper? mapper, 
+            UserManager<User> userManager) 
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
@@ -83,7 +86,14 @@ namespace Services
 
             IdentityResult result = await _userManager.CreateAsync(user);
 
-            return result.Succeeded != false;
+            if (!result.Succeeded)
+            {
+                return false;
+            }
+
+            await _userManager.AddToRoleAsync(user, "User");
+
+            return true;
         }
 
         public async Task<bool> UpdateAsync(string? userId, UpdateUserDto? userDto, CancellationToken cancellationToken = default)
