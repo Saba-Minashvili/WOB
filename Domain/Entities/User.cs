@@ -8,7 +8,6 @@ namespace Domain.Entities
         public string? LastName { get; set; }
         public string? Password { get; set; }
         public string? Photo { get; set; }
-        public bool IsEmailConfirmed { get; set; }
         public List<Book>? FavouriteBooks { get; set; } = new List<Book>();
     }
 }

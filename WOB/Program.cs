@@ -1,10 +1,16 @@
+using Contracts.ViewModels;
 using Domain.Authentication;
 using Domain.Entities;
 using Domain.Repositories;
+using EmailSender.Models;
+using EmailSender.Services;
+using EmailSender.Services.Abstraction;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -45,6 +51,8 @@ builder.Services.Configure<IdentityOptions>(options =>
 	options.Password.RequireNonAlphanumeric = true;
 	options.Password.RequireUppercase = true;
 	options.Password.RequiredLength = 8;
+
+	options.SignIn.RequireConfirmedEmail = true;
 });
 
 builder.Services.Configure<Token>(builder.Configuration.GetSection("JWT"));
@@ -54,10 +62,25 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
 	options.SuppressModelStateInvalidFilter = true;
 });
 
+builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpSettings"));
 
 builder.Services.AddScoped<IServiceManager, ServiceManager>();
 builder.Services.AddScoped<IJwtAuthenticationService, JwtAuthenticationService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IUrlHelper>(o =>
+{
+	var actionContext = o.GetRequiredService<IActionContextAccessor>().ActionContext;
+	var factory = o.GetRequiredService<IUrlHelperFactory>();
+
+#pragma warning disable CS8604 // Possible null reference argument.
+	return factory.GetUrlHelper(actionContext);
+#pragma warning restore CS8604 // Possible null reference argument.
+});
 builder.Services.AddTransient(typeof(IUnitOfWork), typeof(UnitOfWork));
+
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+builder.Services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
+builder.Services.AddSingleton(builder.Configuration.GetSection("EmailConfiguration"));
 
 builder.Services.AddAutoMapper(typeof(ObjectMapper));
 
