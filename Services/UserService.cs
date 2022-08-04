@@ -3,6 +3,7 @@ using Contracts;
 using Domain.Entities;
 using Domain.Exceptions;
 using Domain.Repositories;
+using Encoder.Abstraction;
 using Microsoft.AspNetCore.Identity;
 using Services.Abstractions;
 
@@ -11,15 +12,18 @@ namespace Services
     internal sealed class UserService : IUserService
     {
         private readonly IUnitOfWork? _unitOfWork;
+        private readonly IEncodeService? _encoder;
         private readonly IMapper? _mapper;
         private readonly UserManager<User> _userManager;
 
         public UserService(
-            IUnitOfWork? unitOfWork, 
+            IUnitOfWork? unitOfWork,
+            IEncodeService encoder,
             IMapper? mapper, 
             UserManager<User> userManager) 
         {
             _unitOfWork = unitOfWork;
+            _encoder = encoder;
             _mapper = mapper;
             _userManager = userManager;
         }
@@ -40,6 +44,11 @@ namespace Services
 
             var usersDto = _mapper.Map<IEnumerable<UserDto>>(users);
 
+            foreach(var user in usersDto)
+            {
+                user.Photo = _encoder.DecodeFromBase64(user.Photo);
+            }
+
             return usersDto;
         }
 
@@ -58,6 +67,7 @@ namespace Services
             var user = await _unitOfWork.UserRepository.GetByIdAsync(userId, cancellationToken);
 
             var userDto = _mapper.Map<UserDto>(user);
+            userDto.Photo = _encoder.DecodeFromBase64(user.Photo);
 
             return userDto;
         }
@@ -112,7 +122,7 @@ namespace Services
 
             user.FirstName = userDto.FirstName;
             user.LastName = userDto.LastName;
-            user.Photo = userDto.Photo;
+            user.Photo = _encoder.EncodeToBase64(userDto.Photo);
 
             int result = await _unitOfWork.SaveChangeAsync(cancellationToken);
 

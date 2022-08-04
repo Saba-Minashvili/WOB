@@ -5,6 +5,8 @@ using Domain.Repositories;
 using EmailSender.Models;
 using EmailSender.Services;
 using EmailSender.Services.Abstraction;
+using Encoder;
+using Encoder.Abstraction;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -67,6 +69,7 @@ builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpS
 builder.Services.AddScoped<IServiceManager, ServiceManager>();
 builder.Services.AddScoped<IJwtAuthenticationService, JwtAuthenticationService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IEncodeService, EncodeService>();
 builder.Services.AddScoped<IUrlHelper>(o =>
 {
 	var actionContext = o.GetRequiredService<IActionContextAccessor>().ActionContext;

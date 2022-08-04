@@ -1,4 +1,5 @@
-﻿using Domain.Entities;
+﻿using Contracts;
+using Domain.Entities;
 using Domain.Exceptions;
 using EmailSender.Models;
 using EmailSender.Services.Abstraction;
@@ -90,27 +91,27 @@ namespace EmailSender.Services
             }
         }
 
-        public async Task<bool> SendChangeEmailMessageAsync(string? userId, string? newEmail)
+        public async Task<bool> SendChangeEmailMessageAsync(ChangeEmailDto? changeEmailDto)
         {
-            if (string.IsNullOrEmpty(userId))
+            if(changeEmailDto == null)
             {
-                throw new ArgumentNullException(nameof(userId));
+                throw new ArgumentNullException(nameof(changeEmailDto));
             }
 
-            if (string.IsNullOrEmpty(newEmail))
+            var user = await _userManager.FindByIdAsync(changeEmailDto.UserId);
+
+            if(await _userManager.IsEmailConfirmedAsync(user) == false)
             {
-                throw new ArgumentNullException(nameof(newEmail));
+                throw new EmailNotConfirmedException("In order to change email, you must confirm the current one.");
             }
 
-            var user = await _userManager.FindByIdAsync(userId);
-
-            var confirmationCode = await _userManager.GenerateChangeEmailTokenAsync(user, newEmail);
+            var confirmationCode = await _userManager.GenerateChangeEmailTokenAsync(user, changeEmailDto.NewEmail);
 
             var code = UrlEncode(confirmationCode);
 
-            var callBackUrl = CreateChangeEmailCallBackUrl(userId, newEmail, code);
+            var callBackUrl = CreateChangeEmailCallBackUrl(changeEmailDto.UserId, changeEmailDto.NewEmail, code);
 
-            var message = CreateMessage(newEmail, "Confirm your email", $"Please confirm your email by clicking this link: {callBackUrl}.");
+            var message = CreateMessage(changeEmailDto.NewEmail, "Confirm your email", $"Please confirm your email by clicking this link: {callBackUrl}.");
 
             var result = await SendMessageAsync(message);
 
@@ -126,11 +127,24 @@ namespace EmailSender.Services
                     throw new ArgumentNullException(nameof(code));
                 }
 
+                if (string.IsNullOrEmpty(userId))
+                {
+                    throw new ArgumentNullException(nameof(userId));
+                }
+
+                if (string.IsNullOrEmpty(newEmail))
+                {
+                    throw new ArgumentNullException(nameof(newEmail));
+                }
+
                 code = UrlDecode(code);
 
                 var user = await _userManager.FindByIdAsync(userId);
 
                 IdentityResult result = await _userManager.ChangeEmailAsync(user, newEmail, code);
+
+                user.UserName = newEmail;
+                user.NormalizedUserName = newEmail.ToUpper();
 
                 if (!result.Succeeded)
                 {
@@ -156,7 +170,7 @@ namespace EmailSender.Services
                 Action = "ChangeEmail",
                 Controller = "Email",
                 Protocol = _request.Scheme,
-                Values = new { userId, newEmail, code = code }
+                Values = new { userId, newEmail, code }
             });
 
             return callBackUrl;

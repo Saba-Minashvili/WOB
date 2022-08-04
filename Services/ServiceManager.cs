@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Domain.Entities;
 using Domain.Repositories;
+using Encoder.Abstraction;
 using Microsoft.AspNetCore.Identity;
 using Services.Abstractions;
 
@@ -10,9 +11,9 @@ namespace Services
     {
         private readonly Lazy<IUserService>? _userService;
 
-        public ServiceManager(IUnitOfWork unitOfWork, IMapper mapper, UserManager<User> userManager)
+        public ServiceManager(IUnitOfWork unitOfWork, IEncodeService encodeService, IMapper mapper, UserManager<User> userManager)
         {
-            _userService = new Lazy<IUserService>(() => new UserService(unitOfWork, mapper, userManager));
+            _userService = new Lazy<IUserService>(() => new UserService(unitOfWork, encodeService, mapper, userManager));
         }
 
         public IUserService UserService => _userService.Value;

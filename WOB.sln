@@ -21,7 +21,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Services", "Services\Servic
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Middleware", "Middleware\Middleware.csproj", "{0CE7EE55-CEAE-41A5-BDE9-B1889CE4275F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmailSender", "EmailSender\EmailSender.csproj", "{3984A27B-3338-40D4-AA10-3E4AC3759B5C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EmailSender", "EmailSender\EmailSender.csproj", "{3984A27B-3338-40D4-AA10-3E4AC3759B5C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Encoder", "Encoder\Encoder.csproj", "{3D57DAF7-63F4-423E-AA8A-DACEEA19D8BE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -61,6 +63,10 @@ Global
 		{3984A27B-3338-40D4-AA10-3E4AC3759B5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3984A27B-3338-40D4-AA10-3E4AC3759B5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3984A27B-3338-40D4-AA10-3E4AC3759B5C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3D57DAF7-63F4-423E-AA8A-DACEEA19D8BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3D57DAF7-63F4-423E-AA8A-DACEEA19D8BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3D57DAF7-63F4-423E-AA8A-DACEEA19D8BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3D57DAF7-63F4-423E-AA8A-DACEEA19D8BE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -73,6 +79,7 @@ Global
 		{8A25BC73-D38E-49B3-87C8-EDCF9DCE40D2} = {2A508D8E-3672-42E0-8E4D-C628E592FCE1}
 		{0CE7EE55-CEAE-41A5-BDE9-B1889CE4275F} = {2A508D8E-3672-42E0-8E4D-C628E592FCE1}
 		{3984A27B-3338-40D4-AA10-3E4AC3759B5C} = {2A508D8E-3672-42E0-8E4D-C628E592FCE1}
+		{3D57DAF7-63F4-423E-AA8A-DACEEA19D8BE} = {2A508D8E-3672-42E0-8E4D-C628E592FCE1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {447DB312-9AF7-4D41-8AF0-A8323238F0D7}
