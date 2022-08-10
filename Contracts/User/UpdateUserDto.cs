@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Contracts
+namespace Contracts.User
 {
     public class UpdateUserDto
     {

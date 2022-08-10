@@ -1,4 +1,4 @@
-﻿using Contracts;
+﻿using Contracts.User;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Services.Abstractions;

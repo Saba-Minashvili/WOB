@@ -1,13 +1,14 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
-namespace Contracts
+namespace Contracts.Book
 {
     public class BookDto
     {
         public int Id { get; set; }
         [JsonPropertyName("name")]
         public string? Name { get; set; }
+        [JsonPropertyName("image")]
+        public string? Image { get; set; }
         [JsonPropertyName("authors")]
         public List<AuthorDto>? Authors { get; set; } = new List<AuthorDto>();
         [JsonPropertyName("genre")]
@@ -15,11 +16,8 @@ namespace Contracts
         [JsonPropertyName("pages")]
         public int Pages { get; set; }
         [JsonPropertyName("releaseDate")]
-        [DataType(DataType.DateTime)]
-        public DateTime? ReleaseDate { get; set; }
+        public string? ReleaseDate { get; set; }
         [JsonPropertyName("feedBacks")]
         public List<FeedBackDto>? FeedBacks { get; set; } = new List<FeedBackDto>();
-        [JsonPropertyName("userId")]
-        public string? UserId { get; set; }
     }
 }

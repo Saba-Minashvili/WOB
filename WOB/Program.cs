@@ -54,7 +54,7 @@ builder.Services.Configure<IdentityOptions>(options =>
 	options.Password.RequireUppercase = true;
 	options.Password.RequiredLength = 8;
 
-	options.SignIn.RequireConfirmedEmail = true;
+	options.SignIn.RequireConfirmedEmail = false;
 });
 
 builder.Services.Configure<Token>(builder.Configuration.GetSection("JWT"));

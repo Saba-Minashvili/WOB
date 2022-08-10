@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Contracts;
+using Contracts.User;
 using Domain.Entities;
 using Domain.Exceptions;
 using Domain.Repositories;

@@ -1,4 +1,4 @@
-﻿using Contracts;
+﻿using Contracts.User;
 
 namespace Services.Abstractions
 {

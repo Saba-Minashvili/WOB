@@ -17,7 +17,9 @@ namespace Persistence.Repositories
                 throw new NullReferenceException(nameof(_dbContext));
             }
 
-            return await _dbContext.Users.ToListAsync(cancellationToken);
+            return await _dbContext.Users
+                .Include(o => o.FavouriteBooks)
+                .ToListAsync(cancellationToken);
         }
 
         public async Task<User?> GetByIdAsync(string? userId, CancellationToken cancellationToken = default)
@@ -28,10 +30,11 @@ namespace Persistence.Repositories
             }
 
             return await _dbContext.Users
+                .Include(o => o.FavouriteBooks)
                 .FirstOrDefaultAsync(o => o.Id == userId, cancellationToken);
         }
 
-        public void CreateAsync(User user)
+        public void Create(User user)
         {
             if (_dbContext == null)
             {
@@ -41,7 +44,7 @@ namespace Persistence.Repositories
             _dbContext.Users.Add(user);
         }
 
-        public void UpdateAsync(string? userId, User user)
+        public void Update(string? userId, User user)
         {
             if (_dbContext == null)
             {

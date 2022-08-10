@@ -19,6 +19,7 @@ namespace Persistence
         public DbSet<Book>? Books { get; set; }
         public DbSet<FeedBack>? FeedBacks { get; set; }
         public DbSet<Author>? Authors { get; set; }
+        public DbSet<FavouriteBook>? Favourites { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

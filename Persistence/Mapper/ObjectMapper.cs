@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using Contracts;
+using Contracts.Book;
+using Contracts.User;
 using Contracts.ViewModels;
 using Domain.Entities;
 using Microsoft.AspNetCore.Identity;
@@ -11,7 +13,6 @@ namespace Persistence.Mapper
         public ObjectMapper()
         {
             CreateMap<User, UserDto>()
-                .ForMember(o => o.FavouriteBooks, k => k.MapFrom(m => m.FavouriteBooks))
                 .ReverseMap();
             CreateMap<User, RegisterUserDto>()
                 .ReverseMap();
@@ -20,6 +21,14 @@ namespace Persistence.Mapper
             CreateMap<Book, BookDto>()
                 .ForMember(o => o.Authors, k => k.MapFrom(m => m.Authors))
                 .ForMember(o => o.FeedBacks, k => k.MapFrom(m => m.FeedBacks))
+                .ReverseMap();
+            CreateMap<Book, AddBookDto>()
+                .ReverseMap();
+            CreateMap<Book, UpdateBookDto>()
+                .ReverseMap();
+            CreateMap<FavouriteBook, FavouriteBookDto>()
+                .ReverseMap();
+            CreateMap<FavouriteBook, AddToFavouritesDto>()
                 .ReverseMap();
             CreateMap<Author, AuthorDto>()
                 .ReverseMap();

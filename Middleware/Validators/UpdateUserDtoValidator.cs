@@ -1,4 +1,4 @@
-﻿using Contracts;
+﻿using Contracts.User;
 using FluentValidation;
 
 namespace Middleware.Validators

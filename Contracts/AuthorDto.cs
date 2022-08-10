@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
 namespace Contracts
@@ -10,6 +11,14 @@ namespace Contracts
         public string? FirstName { get; set; }
         [JsonPropertyName("lastName")]
         public string? LastName { get; set; }
+        [NotMapped]
+        public string? FullName
+        {
+            get
+            {
+                return FirstName + " " + LastName;
+            }
+        }
         [JsonPropertyName("age")]
         public int Age { get; set; }
         [JsonPropertyName("origin")]
@@ -17,11 +26,11 @@ namespace Contracts
         [JsonPropertyName("biography")]
         public string? Biography { get; set; }
         [JsonPropertyName("dateOfBirth")]
-        [DataType(DataType.DateTime)]
-        public DateTime? DateOfBirth { get; set; }
+        [DataType(DataType.Date)]
+        public string? DateOfBirth { get; set; }
         [JsonPropertyName("dateOfDeath")]
-        [DataType(DataType.DateTime)]
-        public DateTime? DateOfDeath { get; set; }
+        [DataType(DataType.Date)]
+        public string? DateOfDeath { get; set; }
         [JsonPropertyName("bookId")]
         public int BookId { get; set; }
     }
