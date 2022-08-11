@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Contracts;
 using Contracts.Book;
+using Contracts.Genre;
 using Contracts.User;
 using Contracts.ViewModels;
 using Domain.Entities;
@@ -24,8 +25,6 @@ namespace Persistence.Mapper
                 .ReverseMap();
             CreateMap<Book, AddBookDto>()
                 .ReverseMap();
-            CreateMap<Book, UpdateBookDto>()
-                .ReverseMap();
             CreateMap<FavouriteBook, FavouriteBookDto>()
                 .ReverseMap();
             CreateMap<FavouriteBook, AddToFavouritesDto>()
@@ -35,6 +34,8 @@ namespace Persistence.Mapper
             CreateMap<FeedBack, FeedBackDto>()
                 .ReverseMap();
             CreateMap<RoleModel, IdentityRole>()
+                .ReverseMap();
+            CreateMap<Genre, GenreDto>()
                 .ReverseMap();
         }
     }

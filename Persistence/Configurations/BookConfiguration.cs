@@ -16,6 +16,10 @@ namespace Persistence.Configurations
                 .WithOne()
                 .HasForeignKey(author => author.BookId)
                 .OnDelete(DeleteBehavior.Cascade);
+            builder.HasMany(book => book.Genres)
+                .WithOne()
+                .HasForeignKey(genre => genre.BookId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

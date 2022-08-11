@@ -145,7 +145,7 @@ namespace WOB.Controllers
         [HttpPost]
         public async Task<IActionResult> AddBook([FromBody] AddBookDto? bookDto, CancellationToken cancellationToken = default)
         {
-            if(bookDto == null)
+            if (bookDto == null)
             {
                 return BadRequest($"{nameof(bookDto)} cannot be null");
             }
@@ -155,29 +155,6 @@ namespace WOB.Controllers
             if (!result)
             {
                 return BadRequest("Unable to add a book.");
-            }
-
-            return Ok();
-        }
-
-        [HttpPut("{bookId}")]
-        public async Task<IActionResult> UpdateBook(int bookId, [FromBody] UpdateBookDto? bookDto, CancellationToken cancellationToken = default)
-        {
-            if (bookId == 0)
-            {
-                return BadRequest("Id cannot be 0.");
-            }
-
-            if(bookDto == null)
-            {
-                return BadRequest($"{nameof(BookDto)} cannot be null");
-            }
-
-            var result = await _serviceManager.BookService.UpdateAsync(bookId, bookDto, cancellationToken);
-
-            if (!result)
-            {
-                return BadRequest("Unable to update a book.");
             }
 
             return Ok();

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Contracts;
 using Contracts.Book;
+using Contracts.Genre;
 using Domain.Entities;
 using Domain.Exceptions;
 using Domain.Repositories;
@@ -172,6 +173,7 @@ namespace Services
 
             return bookDto;
         }
+
         public async Task<bool> CreateAsync(AddBookDto? bookDto, CancellationToken cancellationToken = default)
         {
             if(bookDto == null)
@@ -190,34 +192,6 @@ namespace Services
             book.Authors = ValidAuthorsCollection(bookDto.Authors);
 
             _unitOfWork.BookRepository.Create(book);
-
-            var result = await _unitOfWork.SaveChangeAsync(cancellationToken);
-
-            return result != 0;
-        }
-
-        public async Task<bool> UpdateAsync(int bookId, UpdateBookDto? bookDto, CancellationToken cancellationToken = default)
-        {
-            if(bookId == 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(bookId));
-            }
-
-            if(bookDto == null)
-            {
-                throw new ArgumentNullException(nameof(bookDto));
-            }
-
-            var book = await _unitOfWork.BookRepository.GetByIdAsync(bookId, cancellationToken);
-
-            book.Name = bookDto.Name;
-            book.Pages = bookDto.Pages;
-            book.ReleaseDate = bookDto.ReleaseDate;
-            book.Image = _encoder.EncodeToBase64(bookDto.Image);
-            book.Genre = bookDto.Genre;
-            book.Authors = ValidAuthorsCollection(bookDto.Authors);
-
-            _unitOfWork.BookRepository.Update(bookId, book);
 
             var result = await _unitOfWork.SaveChangeAsync(cancellationToken);
 
@@ -278,7 +252,7 @@ namespace Services
         {
             var exists = await _unitOfWork.BookRepository.GetByNameAsync(book.Name);
 
-            if(exists != null)
+            if(exists.Any())
             {
                 // This means that the book already exists in the database.
                 return true;

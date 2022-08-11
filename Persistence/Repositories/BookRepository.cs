@@ -20,6 +20,7 @@ namespace Persistence.Repositories
             return await _dbContext.Books
                 .Include(o => o.Authors)
                 .Include(o => o.FeedBacks)
+                .Include(o => o.Genres)
                 .ToListAsync(cancellationToken);
         }
 
@@ -33,6 +34,7 @@ namespace Persistence.Repositories
             return await _dbContext.Books
                 .Include(o => o.Authors)
                 .Include(o => o.FeedBacks)
+                .Include(o => o.Genres)
                 .Where(o => o.Authors != null && o.Authors.Any(o => o.FirstName.ToLower() == author.ToLower() ||
                         o.LastName.ToLower() == author.ToLower() ||
                         o.FullName.ToLower() == author.ToLower()))
@@ -49,7 +51,8 @@ namespace Persistence.Repositories
             return await _dbContext.Books
                 .Include(o => o.Authors)
                 .Include(o => o.FeedBacks)
-                .Where(o => o.Genre.ToLower() == genre.ToLower())
+                .Include(o => o.Genres)
+                .Where(o => o.Genres != null && o.Genres.Any(o => o.GenreName.ToLower() == genre.ToLower()))
                 .ToListAsync(cancellationToken);
         }
 
@@ -63,6 +66,7 @@ namespace Persistence.Repositories
             return await _dbContext.Books
                 .Include(o => o.Authors)
                 .Include(o => o.FeedBacks)
+                .Include(o => o.Genres)
                 .Where(o => o.Name.ToLower() == bookName.ToLower())
                 .ToListAsync(cancellationToken);
         }
@@ -77,6 +81,7 @@ namespace Persistence.Repositories
             return await _dbContext.Books
                 .Include(o => o.Authors)
                 .Include(o => o.FeedBacks)
+                .Include(o => o.Genres)
                 .Where(o => o.Pages == pageNumber)
                 .ToListAsync(cancellationToken);
         }
@@ -91,6 +96,7 @@ namespace Persistence.Repositories
             return await _dbContext.Books
                 .Include(o => o.Authors)
                 .Include(o => o.FeedBacks)
+                .Include(o => o.Genres)
                 .Where(o => o.ReleaseDate == releaseDate)
                 .ToListAsync(cancellationToken);
         }
@@ -105,6 +111,7 @@ namespace Persistence.Repositories
             return await _dbContext.Books
                 .Include(o => o.Authors)
                 .Include(o => o.FeedBacks)
+                .Include(o => o.Genres)
                 .FirstOrDefaultAsync(o => o.Id == bookId, cancellationToken);
         }
 

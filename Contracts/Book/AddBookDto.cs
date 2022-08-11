@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using Contracts.Genre;
+using System.Text.Json.Serialization;
 
 namespace Contracts.Book
 {
@@ -10,10 +11,12 @@ namespace Contracts.Book
         public string? Image { get; set; }
         [JsonPropertyName("authors")]
         public List<AuthorDto>? Authors { get; set; } = new List<AuthorDto>();
-        [JsonPropertyName("genre")]
-        public string? Genre { get; set; }
+        [JsonPropertyName("genres")]
+        public List<GenreDto>? Genres { get; set; } = new List<GenreDto>();
         [JsonPropertyName("pages")]
         public int Pages { get; set; }
+        [JsonPropertyName("description")]
+        public string? Description { get; set; }
         [JsonPropertyName("releaseDate")]
         public string? ReleaseDate { get; set; }
     }

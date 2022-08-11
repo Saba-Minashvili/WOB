@@ -12,7 +12,6 @@ namespace Services.Abstractions
         Task<IEnumerable<BookDto>> GetByReleaseDateAsync(string? releaseDate, CancellationToken cancellationToken = default);
         Task<BookDto?> GetByIdAsync(int bookId, CancellationToken cancellationToken = default);
         Task<bool> CreateAsync(AddBookDto? bookDto, CancellationToken cancellationToken = default);
-        Task<bool> UpdateAsync(int bookId, UpdateBookDto? bookDto, CancellationToken cancellationToken = default);
         Task<bool> DeleteAsync(int bookId, CancellationToken cancellationToken = default);
     }
 }
