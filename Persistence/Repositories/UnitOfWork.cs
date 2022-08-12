@@ -20,19 +20,12 @@ namespace Persistence.Repositories
 
         public Task<int> SaveChangeAsync(CancellationToken cancellationToken = default)
         {
-            try
+            if (_dbContext == null)
             {
-                if (_dbContext == null)
-                {
-                    throw new NullReferenceException(nameof(_dbContext));
-                }
+                throw new NullReferenceException(nameof(_dbContext));
+            }
 
-                return _dbContext.SaveChangesAsync(cancellationToken);
-            }
-            catch(Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
+            return _dbContext.SaveChangesAsync(cancellationToken);
         }
     }
 }
