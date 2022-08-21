@@ -112,7 +112,8 @@ builder.Services.AddControllers(options =>
 {
 	options.Filters.Add<ValidationFilter>();
 })
-	.AddFluentValidation(configuration => configuration.RegisterValidatorsFromAssembly(typeof(RegisterUserDtoValidator).Assembly));
+	.AddFluentValidation(configuration => configuration.RegisterValidatorsFromAssembly(typeof(RegisterUserDtoValidator).Assembly))
+	.AddNewtonsoftJson();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

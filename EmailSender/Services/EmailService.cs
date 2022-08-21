@@ -141,6 +141,11 @@ namespace EmailSender.Services
 
                 var user = await _userManager.FindByIdAsync(userId);
 
+                if(user.Email.ToLower() == newEmail.ToLower())
+                {
+                    throw new ChangeSameEmailException("This is your current email. If you want to change it please provide different email address.");
+                }
+
                 IdentityResult result = await _userManager.ChangeEmailAsync(user, newEmail, code);
 
                 user.UserName = newEmail;

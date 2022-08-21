@@ -9,7 +9,8 @@ namespace Middleware.Validators
         {
             RuleFor(o => o.Name)
                 .NotNull()
-                .NotEmpty();
+                .NotEmpty()
+                .Matches("^[a-zA-Z ]*$");
         }
     }
 }

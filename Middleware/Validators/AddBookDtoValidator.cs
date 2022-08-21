@@ -10,6 +10,7 @@ namespace Middleware.Validators
             RuleFor(o => o.Name)
                 .NotNull()
                 .NotEmpty()
+                .Matches("^[a-zA-Z ]*$")
                 .MinimumLength(10)
                 .MaximumLength(70)
                 .WithMessage("Title should be at least 10 and maximum 70 characters long.");
@@ -29,8 +30,8 @@ namespace Middleware.Validators
             RuleFor(o => o.Description)
                 .NotNull()
                 .NotEmpty()
-                .MaximumLength(200)
-                .WithMessage("Descript should be maximum 200 characters long.");
+                .MaximumLength(600)
+                .WithMessage("Description should be maximum 600 characters long.");
             RuleFor(o => o.ReleaseDate)
                 .NotNull()
                 .NotEmpty();
