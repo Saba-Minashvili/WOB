@@ -11,17 +11,14 @@ namespace Middleware.Validators
                 .NotNull()
                 .NotEmpty()
                 .Matches("^[a-zA-Z ]*$")
-                .MaximumLength(10)
-                .WithMessage("FirstName cannot exceed 10 characters.");
+                .MaximumLength(50)
+                .WithMessage("FirstName cannot exceed 50 characters.");
             RuleFor(o => o.LastName)
                 .NotNull()
                 .NotEmpty()
                 .Matches("^[a-zA-Z ]*$")
-                .MaximumLength(20)
-                .WithMessage("LastName cannot exceed 20 characters.");
-            RuleFor(o => o.Photo)
-                .NotNull()
-                .NotEmpty();
+                .MaximumLength(50)
+                .WithMessage("LastName cannot exceed 50 characters.");
         }
     }
 }

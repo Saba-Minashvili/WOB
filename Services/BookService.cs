@@ -24,7 +24,7 @@ namespace Services
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<BookDto>> GetAllAsync(CancellationToken cancellationToken = default)
+        public async Task<List<BookDto>> GetAllAsync(CancellationToken cancellationToken = default)
         {
             var books = await _unitOfWork.BookRepository.GetAllAsync(cancellationToken);
 
@@ -33,7 +33,7 @@ namespace Services
                 throw new NullReferenceException(nameof(books));
             }
 
-            var booksDto = _mapper.Map<IEnumerable<BookDto>>(books);
+            var booksDto = _mapper.Map<List<BookDto>>(books);
 
             foreach(var book in booksDto)
             {
@@ -43,7 +43,7 @@ namespace Services
             return booksDto;
         }
 
-        public async Task<IEnumerable<BookDto>> GetByAuthorAsync(string? author, CancellationToken cancellationToken = default)
+        public async Task<List<BookDto>> GetByAuthorAsync(string? author, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrWhiteSpace(author))
             {
@@ -57,7 +57,7 @@ namespace Services
                 throw new NullReferenceException(nameof(books));
             }
 
-            var booksDto = _mapper.Map<IEnumerable<BookDto>>(books);
+            var booksDto = _mapper.Map<List<BookDto>>(books);
 
             foreach(var book in booksDto)
             {
@@ -67,7 +67,7 @@ namespace Services
             return booksDto;
         }
 
-        public async Task<IEnumerable<BookDto>> GetByGenreAsync(string? genre, CancellationToken cancellationToken = default)
+        public async Task<List<BookDto>> GetByGenreAsync(string? genre, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrWhiteSpace(genre))
             {
@@ -81,7 +81,7 @@ namespace Services
                 throw new NullReferenceException(nameof(books));
             }
 
-            var booksDto = _mapper.Map<IEnumerable<BookDto>>(books);
+            var booksDto = _mapper.Map<List<BookDto>>(books);
 
             foreach(var book in booksDto)
             {
@@ -91,7 +91,7 @@ namespace Services
             return booksDto;
         }
 
-        public async Task<IEnumerable<BookDto>> GetByNameAsync(string? bookName, CancellationToken cancellationToken = default)
+        public async Task<List<BookDto>> GetByNameAsync(string? bookName, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrWhiteSpace(bookName))
             {
@@ -105,7 +105,7 @@ namespace Services
                 throw new NullReferenceException(nameof(books));
             }
 
-            var booksDto = _mapper.Map<IEnumerable<BookDto>>(books);
+            var booksDto = _mapper.Map<List<BookDto>>(books);
 
             foreach(var book in booksDto)
             {
@@ -115,7 +115,7 @@ namespace Services
             return booksDto;
         }
 
-        public async Task<IEnumerable<BookDto>> GetByPageNumberAsync(int pageNumber, CancellationToken cancellationToken = default)
+        public async Task<List<BookDto>> GetByPageNumberAsync(int pageNumber, CancellationToken cancellationToken = default)
         {
             var books = await _unitOfWork.BookRepository.GetByPageNumberAsync(pageNumber, cancellationToken);
 
@@ -124,7 +124,7 @@ namespace Services
                 throw new NullReferenceException(nameof(books));
             }
 
-            var booksDto = _mapper.Map<IEnumerable<BookDto>>(books);
+            var booksDto = _mapper.Map<List<BookDto>>(books);
 
             foreach (var book in booksDto)
             {
@@ -134,7 +134,7 @@ namespace Services
             return booksDto;
         }
 
-        public async Task<IEnumerable<BookDto>> GetByReleaseDateAsync(string? releaseDate, CancellationToken cancellationToken = default)
+        public async Task<List<BookDto>> GetByReleaseDateAsync(string? releaseDate, CancellationToken cancellationToken = default)
         {
 
             if (releaseDate == null)
@@ -149,7 +149,7 @@ namespace Services
                 throw new NullReferenceException(nameof(books));
             }
 
-            var booksDto = _mapper.Map<IEnumerable<BookDto>>(books);
+            var booksDto = _mapper.Map<List<BookDto>>(books);
 
             foreach (var book in booksDto)
             {

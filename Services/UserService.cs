@@ -5,6 +5,7 @@ using Domain.Exceptions;
 using Domain.Repositories;
 using Encoder.Abstraction;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.JsonPatch;
 using Services.Abstractions;
 
 namespace Services
@@ -28,7 +29,7 @@ namespace Services
             _userManager = userManager;
         }
 
-        public async Task<IEnumerable<UserDto>> GetAllAsync(CancellationToken cancellationToken = default)
+        public async Task<List<UserDto>> GetAllAsync(CancellationToken cancellationToken = default)
         {
             if(_unitOfWork == null)
             {
@@ -42,7 +43,7 @@ namespace Services
 
             var users = await _unitOfWork.UserRepository.GetAllAsync(cancellationToken);
 
-            var usersDto = _mapper.Map<IEnumerable<UserDto>>(users);
+            var usersDto = _mapper.Map<List<UserDto>>(users);
 
             foreach(var user in usersDto)
             {
@@ -106,7 +107,7 @@ namespace Services
             return true;
         }
 
-        public async Task<bool> UpdateAsync(string? userId, UpdateUserDto? userDto, CancellationToken cancellationToken = default)
+        public async Task<bool> UpdateAsync(string? userId, JsonPatchDocument<UpdateUserDto>? userDto, CancellationToken cancellationToken = default)
         {
             if (_unitOfWork == null)
             {
@@ -118,11 +119,20 @@ namespace Services
                 throw new NullReferenceException(nameof(_mapper));
             }
 
+            if(userDto == null)
+            {
+                throw new ArgumentNullException(nameof(userDto));
+            }
+
             var user = await _unitOfWork.UserRepository.GetByIdAsync(userId, cancellationToken);
 
-            user.FirstName = userDto.FirstName;
-            user.LastName = userDto.LastName;
-            user.Photo = _encoder.EncodeToBase64(userDto.Photo);
+            JsonPatchDocument userPatch = _mapper.Map<JsonPatchDocument>(userDto);
+
+            string pathPropertyValue = GetPatchDocumentPropertyValue(userDto);
+
+            _unitOfWork.UserRepository.Update(user, userPatch);
+
+            user.Photo = _encoder.EncodeToBase64(pathPropertyValue);
 
             int result = await _unitOfWork.SaveChangeAsync(cancellationToken);
 
@@ -139,6 +149,37 @@ namespace Services
             var user = await _userManager.FindByEmailAsync(email);
 
             return user != null;
+        }
+
+        // This method is used to get the value of "photo" property
+        // in order to encode it into base64 string before uploading to database
+        private static string GetPatchDocumentPropertyValue(JsonPatchDocument<UpdateUserDto>? patchDocument)
+        {
+            var pathValue = "";
+
+            if (patchDocument == null)
+            {
+                return "";
+            }
+
+            var path = patchDocument.Operations.FirstOrDefault(o => o.path == "photo");
+
+            if(path == null)
+            {
+                return "";
+            }
+
+            if(path.path == "photo")
+            {
+                pathValue = path.value.ToString();
+            }
+
+            if (string.IsNullOrEmpty(pathValue))
+            {
+                return "";
+            }
+
+            return pathValue;
         }
     }
 }

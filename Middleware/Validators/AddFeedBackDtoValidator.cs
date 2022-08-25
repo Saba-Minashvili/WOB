@@ -10,11 +10,12 @@ namespace Middleware.Validators
             RuleFor(o => o.Comment)
                 .NotNull()
                 .NotEmpty()
-                .MaximumLength(100)
-                .WithMessage("Comment should be maximum 100 characters long.");
-            RuleFor(o => o.Name)
+                .MaximumLength(600)
+                .WithMessage("Comment should be maximum 600 characters long.");
+            RuleFor(o => o.UserName)
                 .NotNull()
                 .NotEmpty()
+                .MaximumLength(50)
                 .Matches("^[a-zA-Z ]*$");
         }
     }

@@ -18,7 +18,7 @@ namespace Services
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<FeedBackDto>> GetAllAsync(CancellationToken cancellationToken = default)
+        public async Task<List<FeedBackDto>> GetAllAsync(CancellationToken cancellationToken = default)
         {
             var feedBacks = await _unitOfWork.FeedBackRepository.GetAllAsync(cancellationToken);
 
@@ -27,12 +27,12 @@ namespace Services
                 throw new NullReferenceException(nameof(feedBacks));
             }
 
-            var feedBacksDto = _mapper.Map<IEnumerable<FeedBackDto>>(feedBacks);
+            var feedBacksDto = _mapper.Map<List<FeedBackDto>>(feedBacks);
 
             return feedBacksDto;
         }
 
-        public async Task<IEnumerable<FeedBackDto>> GetByBookIdAsync(int bookId, CancellationToken cancellationToken = default)
+        public async Task<List<FeedBackDto>> GetByBookIdAsync(int bookId, CancellationToken cancellationToken = default)
         {
             if(bookId == 0)
             {
@@ -46,7 +46,7 @@ namespace Services
                 throw new NullReferenceException(nameof(feedBacks));
             }
 
-            var feedBacksDto = _mapper.Map<IEnumerable<FeedBackDto>>(feedBacks);
+            var feedBacksDto = _mapper.Map<List<FeedBackDto>>(feedBacks);
 
             return feedBacksDto;
         }
@@ -82,7 +82,7 @@ namespace Services
             feedBack.CommentDate = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
             feedBack.ModifiedAt = "";
 
-            _unitOfWork.FeedBackRepository.CreateAsync(feedBack);
+            _unitOfWork.FeedBackRepository.Create(feedBack);
 
             var result = await _unitOfWork.SaveChangeAsync(cancellationToken);
 
@@ -103,14 +103,14 @@ namespace Services
                 throw new NullReferenceException(nameof(feedBack));
             }
 
-            _unitOfWork.FeedBackRepository.DeleteAsync(feedBack);
+            _unitOfWork.FeedBackRepository.Delete(feedBack);
 
             var result = await _unitOfWork.SaveChangeAsync(cancellationToken);
 
             return result != 0;
         }
 
-        public async Task<bool> UpdateAsync(int feedBackId, JsonPatchDocument? feedBackPatch, CancellationToken cancellationToken = default)
+        public async Task<bool> UpdateAsync(int feedBackId, JsonPatchDocument<UpdateFeedBackDto>? feedBackDto, CancellationToken cancellationToken = default)
         {
             if(feedBackId == 0)
             {
@@ -121,7 +121,9 @@ namespace Services
 
             feedBack.ModifiedAt = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
 
-            _unitOfWork.FeedBackRepository.UpdateAsync(feedBack, feedBackPatch);
+            var feedBackPatch = _mapper.Map<JsonPatchDocument>(feedBackDto);
+
+            _unitOfWork.FeedBackRepository.Update(feedBack, feedBackPatch);
 
             var result = await _unitOfWork.SaveChangeAsync(cancellationToken);
 

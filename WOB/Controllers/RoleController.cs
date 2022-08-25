@@ -80,7 +80,7 @@ namespace WOB.Controllers
 
         [AllowAnonymous]
         [HttpPost]
-        // These controller create roles and them users in advance
+        // These controller creates roles and their users in advance
         public async Task<IActionResult> CreateRolesAndUsers()
         {
             // Checking if admin role already exists
@@ -96,9 +96,12 @@ namespace WOB.Controllers
 
                 // Then we are creating User that will have a Admin role
                 var user = new User();
+
                 string email = Configuration["AdminSettings:Email"];
                 string password = Configuration["AdminSettings:Password"];
 
+                user.FirstName = Configuration["AdminSettings:FirstName"]; ;
+                user.LastName = Configuration["AdminSettings:LastName"];
                 user.UserName = user.Email = email;
                 user.PasswordHash = _userManager.PasswordHasher.HashPassword(user, password);
 
@@ -126,9 +129,12 @@ namespace WOB.Controllers
 
                 // Then we are creating User that will have a Manager role
                 var user = new User();
+
                 string email = Configuration["ManagerSettings:Email"];
                 string password = Configuration["ManagerSettings:Password"];
 
+                user.FirstName = Configuration["ManagerSettings:FirstName"];
+                user.LastName = Configuration["ManagerSettings:LastName"];
                 user.UserName = user.Email = email;
                 user.PasswordHash = _userManager.PasswordHasher.HashPassword(user, password);
 

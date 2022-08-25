@@ -1,5 +1,6 @@
 ﻿using Contracts.User;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Services.Abstractions;
 
@@ -60,8 +61,8 @@ namespace WOB.Controllers
             return Ok();
         }
 
-        [HttpPut("{userId}")]
-        public async Task<IActionResult> UpdateUser(string? userId, [FromBody] UpdateUserDto? userDto, CancellationToken cancellationToken = default)
+        [HttpPatch("{userId}")]
+        public async Task<IActionResult> UpdateUser(string? userId, [FromBody] JsonPatchDocument<UpdateUserDto>? userDto, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrEmpty(userId))
             {

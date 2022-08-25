@@ -11,8 +11,12 @@ namespace Middleware.Validators
                 .NotNull()
                 .NotEmpty()
                 .Matches("^[a-zA-Z0-9 ]*$")
-                .MaximumLength(200)
-                .WithMessage("Comment should be maximum 200 characters long.");
+                .MaximumLength(600)
+                .WithMessage("Comment should be maximum 600 characters long.");
+            RuleFor(o => o.ModifiedAt)
+                .NotNull()
+                .NotEmpty()
+                .MaximumLength(100);
         }
     }
 }

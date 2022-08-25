@@ -10,95 +10,208 @@ namespace Persistence.Repositories
 
         public BookRepository(ApplicationDbContext? dbContext) => _dbContext = dbContext;
 
-        public async Task<IEnumerable<Book>> GetAllAsync(CancellationToken cancellationToken = default)
+        public async Task<List<Book>> GetAllAsync(CancellationToken cancellationToken = default)
         {
             if(_dbContext.Books == null)
             {
                 throw new NullReferenceException(nameof(_dbContext.Books));
             }
 
+#pragma warning disable CS8604 // Possible null reference argument.
             return await _dbContext.Books
-                .Include(o => o.Authors)
-                .Include(o => o.FeedBacks)
-                .Include(o => o.Genres)
+                .AsNoTracking()
+                .SelectMany(o => o.Authors.Select(m => new Book
+                {
+                    Name = o.Name,
+                    Image = o.Image,
+                    Authors = new List<Author>()
+                    {
+                        new Author
+                        {
+                            Id = m.Id,
+                            FirstName = m.FirstName,
+                            LastName = m.LastName,
+                            BookId = m.BookId
+                        }
+                    },
+                    Pages = o.Pages,
+                    Description = o.Description,
+                    ReleaseDate = o.ReleaseDate
+                }))
                 .ToListAsync(cancellationToken);
+#pragma warning restore CS8604 // Possible null reference argument.
         }
 
-        public async Task<IEnumerable<Book>> GetByAuthorAsync(string? author, CancellationToken cancellationToken = default)
+        public async Task<List<Book>> GetByAuthorAsync(string? author, CancellationToken cancellationToken = default)
         {
             if (_dbContext.Books == null)
             {
                 throw new NullReferenceException(nameof(_dbContext.Books));
             }
 
-            return await _dbContext.Books
-                .Include(o => o.Authors)
-                .Include(o => o.FeedBacks)
-                .Include(o => o.Genres)
+#pragma warning disable CS8604 // Possible null reference argument.
+            IQueryable<Book> books = _dbContext.Books
+                .AsNoTracking()
                 .Where(o => o.Authors != null && o.Authors.Any(o => o.FirstName.ToLower() == author.ToLower() ||
                         o.LastName.ToLower() == author.ToLower() ||
                         o.FullName.ToLower() == author.ToLower()))
-                .ToListAsync(cancellationToken);
+                .SelectMany(o => o.Authors.Select(m => new Book
+                {
+                    Name = o.Name,
+                    Image = o.Image,
+                    Authors = new List<Author>()
+                    {
+                        new Author
+                        {
+                            Id = m.Id,
+                            FirstName = m.FirstName,
+                            LastName = m.LastName,
+                            BookId = m.BookId
+                        }
+                    },
+                    Pages = o.Pages,
+                    Description = o.Description,
+                    ReleaseDate = o.ReleaseDate
+                }));
+#pragma warning restore CS8604 // Possible null reference argument.
+
+            return await books.ToListAsync(cancellationToken);
         }
 
-        public async Task<IEnumerable<Book>> GetByGenreAsync(string? genre, CancellationToken cancellationToken = default)
+        public async Task<List<Book>> GetByGenreAsync(string? genre, CancellationToken cancellationToken = default)
         {
             if (_dbContext.Books == null)
             {
                 throw new NullReferenceException(nameof(_dbContext.Books));
             }
 
-            return await _dbContext.Books
-                .Include(o => o.Authors)
-                .Include(o => o.FeedBacks)
-                .Include(o => o.Genres)
+#pragma warning disable CS8604 // Possible null reference argument.
+            IQueryable<Book> books = _dbContext.Books
+                .AsNoTracking()
                 .Where(o => o.Genres != null && o.Genres.Any(o => o.GenreName.ToLower() == genre.ToLower()))
-                .ToListAsync(cancellationToken);
+                .SelectMany(o => o.Authors.Select(m => new Book
+                {
+                    Name = o.Name,
+                    Image = o.Image,
+                    Authors = new List<Author>()
+                    {
+                        new Author
+                        {
+                            Id = m.Id,
+                            FirstName = m.FirstName,
+                            LastName = m.LastName,
+                            BookId = m.BookId
+                        }
+                    },
+                    Pages = o.Pages,
+                    Description = o.Description,
+                    ReleaseDate = o.ReleaseDate
+                }));
+#pragma warning restore CS8604 // Possible null reference argument.
+
+            return await books.ToListAsync(cancellationToken);
         }
 
-        public async Task<IEnumerable<Book>> GetByNameAsync(string? bookName, CancellationToken cancellationToken = default)
+        public async Task<List<Book>> GetByNameAsync(string? bookName, CancellationToken cancellationToken = default)
         {
             if (_dbContext.Books == null)
             {
                 throw new NullReferenceException(nameof(_dbContext.Books));
             }
 
-            return await _dbContext.Books
-                .Include(o => o.Authors)
-                .Include(o => o.FeedBacks)
-                .Include(o => o.Genres)
-                .Where(o => o.Name.ToLower() == bookName.ToLower())
-                .ToListAsync(cancellationToken);
+#pragma warning disable CS8604 // Possible null reference argument.
+            IQueryable<Book> books = _dbContext.Books
+                .AsNoTracking()
+                .SelectMany(o => o.Authors.Select(m => new Book
+                {
+                    Name = o.Name,
+                    Image = o.Image,
+                    Authors = new List<Author>()
+                    {
+                        new Author
+                        {
+                            Id = m.Id,
+                            FirstName = m.FirstName,
+                            LastName = m.LastName,
+                            BookId = m.BookId
+                        }
+                    },
+                    Pages = o.Pages,
+                    Description = o.Description,
+                    ReleaseDate = o.ReleaseDate
+                }))
+                .Where(o => o.Name.ToLower() == bookName.ToLower());
+#pragma warning restore CS8604 // Possible null reference argument.
+
+            return await books.ToListAsync(cancellationToken);
         }
 
-        public async Task<IEnumerable<Book>> GetByPageNumberAsync(int pageNumber, CancellationToken cancellationToken = default)
+        public async Task<List<Book>> GetByPageNumberAsync(int pageNumber, CancellationToken cancellationToken = default)
         {
             if (_dbContext.Books == null)
             {
                 throw new NullReferenceException(nameof(_dbContext.Books));
             }
 
-            return await _dbContext.Books
-                .Include(o => o.Authors)
-                .Include(o => o.FeedBacks)
-                .Include(o => o.Genres)
-                .Where(o => o.Pages == pageNumber)
-                .ToListAsync(cancellationToken);
+#pragma warning disable CS8604 // Possible null reference argument.
+            IQueryable<Book> books = _dbContext.Books
+                .AsNoTracking()
+                .SelectMany(o => o.Authors.Select(m => new Book
+                {
+                    Name = o.Name,
+                    Image = o.Image,
+                    Authors = new List<Author>()
+                    {
+                        new Author
+                        {
+                            Id = m.Id,
+                            FirstName = m.FirstName,
+                            LastName = m.LastName,
+                            BookId = m.BookId
+                        }
+                    },
+                    Pages = o.Pages,
+                    Description = o.Description,
+                    ReleaseDate = o.ReleaseDate
+                }))
+                .Where(o => o.Pages == pageNumber);
+#pragma warning restore CS8604 // Possible null reference argument.
+
+            return await books.ToListAsync(cancellationToken);
         }
 
-        public async Task<IEnumerable<Book>> GetByReleaseDateAsync(string? releaseDate, CancellationToken cancellationToken = default)
+        public async Task<List<Book>> GetByReleaseDateAsync(string? releaseDate, CancellationToken cancellationToken = default)
         {
             if (_dbContext.Books == null)
             {
                 throw new NullReferenceException(nameof(_dbContext.Books));
             }
 
-            return await _dbContext.Books
-                .Include(o => o.Authors)
-                .Include(o => o.FeedBacks)
-                .Include(o => o.Genres)
-                .Where(o => o.ReleaseDate == releaseDate)
-                .ToListAsync(cancellationToken);
+#pragma warning disable CS8604 // Possible null reference argument.
+            IQueryable<Book> books = _dbContext.Books
+                .AsNoTracking()
+                .SelectMany(o => o.Authors.Select(m => new Book
+                {
+                    Name = o.Name,
+                    Image = o.Image,
+                    Authors = new List<Author>()
+                    {
+                        new Author
+                        {
+                            Id = m.Id,
+                            FirstName = m.FirstName,
+                            LastName = m.LastName,
+                            BookId = m.BookId
+                        }
+                    },
+                    Pages = o.Pages,
+                    Description = o.Description,
+                    ReleaseDate = o.ReleaseDate
+                }))
+                .Where(o => o.ReleaseDate == releaseDate);
+#pragma warning restore CS8604 // Possible null reference argument.
+
+            return await books.ToListAsync(cancellationToken);
         }
 
         public async Task<Book?> GetByIdAsync(int bookId, CancellationToken cancellationToken = default)
@@ -108,11 +221,13 @@ namespace Persistence.Repositories
                 throw new NullReferenceException(nameof(_dbContext.Books));
             }
 
-            return await _dbContext.Books
+            IQueryable<Book> books = _dbContext.Books
+                .AsNoTracking()
                 .Include(o => o.Authors)
                 .Include(o => o.FeedBacks)
-                .Include(o => o.Genres)
-                .FirstOrDefaultAsync(o => o.Id == bookId, cancellationToken);
+                .Include(o => o.Genres);
+
+            return await books.FirstOrDefaultAsync(o => o.Id == bookId, cancellationToken);
         }
 
         public void Create(Book? book)

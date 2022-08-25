@@ -6,8 +6,8 @@ namespace Contracts.FeedBack
     public class FeedBackDto
     {
         public int Id { get; set; }
-        [JsonPropertyName("name")]
-        public string? Name { get; set; }
+        [JsonPropertyName("userName")]
+        public string? UserName { get; set; }
         [JsonPropertyName("comment")]
         public string? Comment { get; set; }
         [JsonPropertyName("commentDate")]

@@ -10,7 +10,7 @@ namespace Persistence.Repositories
 
         public FavouriteBookRepository(ApplicationDbContext? dbContext) => _dbContext = dbContext;
 
-        public async Task<IEnumerable<FavouriteBook>> GetAllAsync(CancellationToken cancellationToken = default)
+        public async Task<List<FavouriteBook>> GetAllAsync(CancellationToken cancellationToken = default)
         {
             if(_dbContext.Favourites == null)
             {
@@ -18,21 +18,23 @@ namespace Persistence.Repositories
             }
 
             return await _dbContext.Favourites
-                .Include(o => o.Book.Authors)
+                .Include(o => o.Book)
+                .AsNoTracking()
                 .ToListAsync(cancellationToken);
         }
 
-        public async Task<IEnumerable<FavouriteBook>> GetByUserIdAsync(string? userId, CancellationToken cancellationToken = default)
+        public async Task<List<FavouriteBook>> GetByUserIdAsync(string? userId, CancellationToken cancellationToken = default)
         {
             if (_dbContext.Favourites == null)
             {
                 throw new NullReferenceException(nameof(_dbContext.Favourites));
             }
 
-            return await _dbContext.Favourites
-                .Include(o => o.Book.Authors)
-                .Where(o => o.UserId == userId)
-                .ToListAsync(cancellationToken);
+            IQueryable<FavouriteBook> favBooks = _dbContext.Favourites
+                .AsNoTracking()
+                .Where(o => o.UserId == userId);
+
+            return await favBooks.ToListAsync(cancellationToken);
         }
 
         public async Task<FavouriteBook?> GetByIdAsync(int favouriteBookId, CancellationToken cancellationToken = default)
@@ -43,7 +45,9 @@ namespace Persistence.Repositories
             }
 
             return await _dbContext.Favourites
-                .Include(o => o.Book.Authors)
+                .Include(o => o.Book)
+                .AsNoTracking()
+                .AsQueryable()
                 .FirstOrDefaultAsync(o => o.Id == favouriteBookId, cancellationToken);
         }
 

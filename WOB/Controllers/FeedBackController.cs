@@ -78,7 +78,7 @@ namespace WOB.Controllers
         }
 
         [HttpPatch("{feedBackId}")]
-        public async Task<IActionResult> UpdateFeedBack(int feedBackId, [FromBody] JsonPatchDocument feedBackDto, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> UpdateFeedBack(int feedBackId, [FromBody] JsonPatchDocument<UpdateFeedBackDto>? feedBackDto, CancellationToken cancellationToken = default)
         {
             var result = await _serviceManager.FeedBackService.UpdateAsync(feedBackId, feedBackDto, cancellationToken);
 

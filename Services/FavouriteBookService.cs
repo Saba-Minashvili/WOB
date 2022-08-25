@@ -20,7 +20,7 @@ namespace Services
             _encoder = encoder;
             _mapper = mapper;
         }
-        public async Task<IEnumerable<FavouriteBookDto>> GetAllAsync(CancellationToken cancellationToken = default)
+        public async Task<List<FavouriteBookDto>> GetAllAsync(CancellationToken cancellationToken = default)
         {
             var favouriteBooks = await _unitOfWork.FavouriteBookRepository.GetAllAsync(cancellationToken);
 
@@ -29,7 +29,7 @@ namespace Services
                 throw new NullReferenceException(nameof(favouriteBooks));
             }
 
-            var favouriteBooksDto = _mapper.Map<IEnumerable<FavouriteBookDto>>(favouriteBooks);
+            var favouriteBooksDto = _mapper.Map<List<FavouriteBookDto>>(favouriteBooks);
 
             foreach(var favouriteBook in favouriteBooksDto)
             {
@@ -39,7 +39,7 @@ namespace Services
             return favouriteBooksDto;
         }
 
-        public async Task<IEnumerable<FavouriteBookDto>> GetByUserIdAsync(string? userId, CancellationToken cancellationToken = default)
+        public async Task<List<FavouriteBookDto>> GetByUserIdAsync(string? userId, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrEmpty(userId))
             {
@@ -53,7 +53,7 @@ namespace Services
                 throw new NullReferenceException(nameof(favouriteBooks));
             }
 
-            var favouriteBooksDto = _mapper.Map<IEnumerable<FavouriteBookDto>>(favouriteBooks);
+            var favouriteBooksDto = _mapper.Map<List<FavouriteBookDto>>(favouriteBooks);
 
             foreach(var favouriteBook in favouriteBooksDto)
             {

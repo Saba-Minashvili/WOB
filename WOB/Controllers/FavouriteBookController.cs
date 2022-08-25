@@ -27,7 +27,7 @@ namespace WOB.Controllers
             return Ok(favouriteBooks);
         }
 
-        [HttpGet("{userId}")]
+        [HttpGet("[action]/{userId}")]
         public async Task<IActionResult> GetFavouriteBooksByUserId(string? userId, CancellationToken cancellationToken)
         {
             if (string.IsNullOrEmpty(userId))
@@ -43,6 +43,24 @@ namespace WOB.Controllers
             }
 
             return Ok(favouriteBooks);
+        }
+
+        [HttpGet("[action]/{favouriteBookId}")]
+        public async Task<IActionResult> GetFavouriteBookById(int favouriteBookId, CancellationToken cancellationToken)
+        {
+            if (favouriteBookId == 0)
+            {
+                return BadRequest($"{nameof(favouriteBookId)} cannot be equal to 0.");
+            }
+
+            var favouriteBook = await _serviceManager.FavouriteBookService.GetByIdAsync(favouriteBookId, cancellationToken);
+
+            if (favouriteBook == null)
+            {
+                return BadRequest("Unable to get the favourite book.");
+            }
+
+            return Ok(favouriteBook);
         }
 
         [HttpPost]

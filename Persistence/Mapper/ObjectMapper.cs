@@ -21,6 +21,8 @@ namespace Persistence.Mapper
                 .ReverseMap();
             CreateMap<User, UpdateUserDto>()
                 .ReverseMap();
+            CreateMap<JsonPatchDocument, JsonPatchDocument<UpdateUserDto>>()
+                .ReverseMap();
             CreateMap<Book, BookDto>()
                 .ForMember(o => o.Authors, k => k.MapFrom(m => m.Authors))
                 .ForMember(o => o.FeedBacks, k => k.MapFrom(m => m.FeedBacks))
@@ -36,6 +38,8 @@ namespace Persistence.Mapper
             CreateMap<FeedBack, FeedBackDto>()
                 .ReverseMap();
             CreateMap<FeedBack, AddFeedBackDto>()
+                .ReverseMap();
+            CreateMap<JsonPatchDocument, JsonPatchDocument<UpdateFeedBackDto>>()
                 .ReverseMap();
             CreateMap<RoleModel, IdentityRole>()
                 .ReverseMap();

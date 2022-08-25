@@ -1,5 +1,6 @@
 ﻿using Domain.Entities;
 using Domain.Repositories;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.EntityFrameworkCore;
 
 namespace Persistence.Repositories
@@ -10,7 +11,7 @@ namespace Persistence.Repositories
 
         public UserRepository(ApplicationDbContext? dbContext) => _dbContext = dbContext;
 
-        public async Task<IEnumerable<User>> GetAllAsync(CancellationToken cancellationToken = default)
+        public async Task<List<User>> GetAllAsync(CancellationToken cancellationToken = default)
         {
             if(_dbContext == null)
             {
@@ -18,7 +19,7 @@ namespace Persistence.Repositories
             }
 
             return await _dbContext.Users
-                .Include(o => o.FavouriteBooks)
+                .AsNoTracking()
                 .ToListAsync(cancellationToken);
         }
 
@@ -30,7 +31,7 @@ namespace Persistence.Repositories
             }
 
             return await _dbContext.Users
-                .Include(o => o.FavouriteBooks)
+                .AsQueryable()
                 .FirstOrDefaultAsync(o => o.Id == userId, cancellationToken);
         }
 
@@ -44,15 +45,24 @@ namespace Persistence.Repositories
             _dbContext.Users.Add(user);
         }
 
-        public void Update(string? userId, User user)
+        public void Update(User? user, JsonPatchDocument? userPatch)
         {
             if (_dbContext == null)
             {
                 throw new NullReferenceException(nameof(_dbContext));
             }
 
-            user.Id = userId;
-            _dbContext.Users.Update(user);
+            if(user == null)
+            {
+                throw new NullReferenceException(nameof(user));
+            }
+
+            if(userPatch == null)
+            {
+                throw new ArgumentNullException(nameof(userPatch));
+            }
+
+            userPatch.ApplyTo(user);
         }
     }
 }

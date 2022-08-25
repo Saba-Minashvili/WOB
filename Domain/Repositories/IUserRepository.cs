@@ -1,12 +1,13 @@
 ﻿using Domain.Entities;
+using Microsoft.AspNetCore.JsonPatch;
 
 namespace Domain.Repositories
 {
     public interface IUserRepository
     {
-        Task<IEnumerable<User>> GetAllAsync(CancellationToken cancellationToken = default);
+        Task<List<User>> GetAllAsync(CancellationToken cancellationToken = default);
         Task<User?> GetByIdAsync(string? userId, CancellationToken cancellationToken = default);
         void Create(User user);
-        void Update(string? userId, User user);
+        void Update(User? user, JsonPatchDocument? userPatch);
     }
 }
